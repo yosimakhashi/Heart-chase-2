@@ -88,6 +88,18 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
 .log-entry b.negative{color:#ff8b8b}
 @media(max-width:650px){.unlock-section,.score-system{padding:13px}.unlock-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.unlock-art{height:130px}.mission-grid,.penalty-grid{grid-template-columns:1fr}.single-portrait{height:430px}.unlock-progress-top{font-size:8px}}
 
+
+.charm-game{margin-top:16px;padding:14px;border:1px solid #ff5c9a55;border-radius:14px;background:#ff5c9a0a}
+.charm-game>div:first-child strong{display:block;font:600 16px 'Playfair Display'}
+.charm-game small{display:block;color:var(--muted);font-size:10px;margin-top:4px}
+.charm-playfield{height:190px;position:relative;margin-top:12px;border:1px solid #ffffff20;border-radius:12px;overflow:hidden;background:radial-gradient(ellipse at center,#452044,#100b19)}
+.charm-playfield #charmTimer{position:absolute;top:10px;left:12px;font:700 20px 'DM Mono';color:#fff}
+.charm-playfield #charmRunScore{position:absolute;top:12px;right:12px;color:var(--pink);font:700 13px 'DM Mono'}
+.charm-playfield button{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);padding:11px 17px;border-radius:99px;background:linear-gradient(100deg,#ff5c9a,#bd73cb);color:#190e1b;font-size:10px;font-weight:900}
+.charm-heart{position:absolute;border:0;background:none;font-size:28px;line-height:1;padding:4px;animation:heartFloat 1.4s linear forwards}
+@keyframes heartFloat{from{opacity:1;transform:translateY(0) scale(.8)}to{opacity:0;transform:translateY(-24px) scale(1.2)}}
+.charm-runs{font:9px 'DM Mono';color:var(--muted);margin-top:8px}
+
 </style>
 </head>
 <body>
@@ -126,6 +138,7 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
  <div class="section-head penalty-head"><div><h2>Red flags</h2><p>Honest accountability. These actions deduct points.</p></div></div>
  <div class="penalty-grid" id="redFlags"></div>
  <form id="bonusForm" class="bonus-form"><div><strong>Extra points</strong><small>Reward a meaningful action not listed above.</small></div><input id="bonusReason" type="text" maxlength="80" placeholder="What did you accomplish?" required><div class="bonus-row"><input id="bonusPoints" type="number" min="1" max="5000" step="1" placeholder="Points" required><button class="primary" type="submit">ADD POINTS</button></div></form>
+ <div class="charm-game"><div><strong>Charm challenge</strong><small>30 seconds · red hearts +5 · gold hearts +25 · broken hearts −15 · three runs daily</small></div><div class="charm-playfield" id="charmPlayfield"><span id="charmTimer">30</span><button type="button" id="charmStart">START CHALLENGE</button><strong id="charmRunScore">+0</strong></div><div class="charm-runs" id="charmRuns">3 runs remaining today</div></div>
  <div class="score-log"><div class="log-head"><strong>Score history</strong><span id="logTotal">0 TOTAL</span></div><div id="scoreLog"></div></div>
 </section>
 <section class="cast-picker" style="display:none"><div class="cast-strip" id="castStrip"></div></section>
@@ -163,6 +176,10 @@ function dayBefore(k){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()-1);r
 const savedScore=(()=>{try{return JSON.parse(localStorage.getItem(SCORE_KEY)||'null')}catch(e){return null}})();
 let scoreState=savedScore&&typeof savedScore==='object'?savedScore:{total:Math.max(points,Number(OLD_HEART_SAVE?.total||OLD_HEART_SAVE?.points||0)),date:dateKey(),done:{},streak:0,lastStreak:'',log:[],unlockedCount:0,selected:'reina'};
 scoreState.total=Math.max(Number(scoreState.total)||0,points,Number(OLD_HEART_SAVE?.total||0));
+scoreState.done=scoreState.done&&typeof scoreState.done==='object'?scoreState.done:{};
+scoreState.log=Array.isArray(scoreState.log)?scoreState.log:[];
+scoreState.streak=Number(scoreState.streak)||0;
+scoreState.lastStreak=scoreState.lastStreak||'';
 scoreState.unlockedCount=Math.max(0,Math.min(5,Number(scoreState.unlockedCount)||0));
 if(scoreState.date!==dateKey()){scoreState.date=dateKey();scoreState.done={};}
 points=scoreState.total;
@@ -175,7 +192,7 @@ function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');
 function openStory(id){active=cast.find(c=>c.id===id);if(!active)return;$('dialogImg').src=active.image;$('dialogImg').alt='Portrait of '+active.name;$('dialogRole').textContent=active.role+' · '+active.age;$('dialogName').textContent=active.name;$('dialogBio').textContent=active.intro;$('speech').textContent='“'+active.line+'”';$('choices').innerHTML=active.choices.map((ch,i)=>'<button class="choice" data-choice="'+i+'">'+ch[0]+'</button>').join('');$('overlay').classList.add('show');document.body.style.overflow='hidden';}
 function closeStory(){$('overlay').classList.remove('show');document.body.style.overflow='';active=null;}
 $('characters').addEventListener('click',e=>{let s=e.target.closest('[data-save]'),m=e.target.closest('[data-meet]');if(s){let id=s.dataset.save;saved=saved.includes(id)?saved.filter(x=>x!==id):[...saved,id];persist();render();toast(saved.includes(id)?'Added to favourites ♥':'Removed from favourites');}if(m)openStory(m.dataset.meet);});
-$('choices').addEventListener('click',e=>{let b=e.target.closest('[data-choice]');if(!b||!active)return;let choice=active.choices[Number(b.dataset.choice)];$('speech').textContent='“'+choice[1]+'”';if(!played.includes(active.id)){played.push(active.id);points+=100;}else points+=10;persist();stats();$('choices').innerHTML='<button class="choice" id="again">↻ Continue the conversation</button><button class="choice" id="done">← Back to the characters</button>';$('again').onclick=()=>openStory(active.id);$('done').onclick=closeStory;toast('Connection strengthened · +'+(played.filter(x=>x===active.id).length===1?100:10)+' heart points');});
+$('choices').addEventListener('click',e=>{let b=e.target.closest('[data-choice]');if(!b||!active)return;let choice=active.choices[Number(b.dataset.choice)];$('speech').textContent='“'+choice[1]+'”';if(!played.includes(active.id))played.push(active.id);persist();stats();$('choices').innerHTML='<button class="choice" id="again">↻ Continue the conversation</button><button class="choice" id="done">← Back to the characters</button>';$('again').onclick=()=>openStory(active.id);$('done').onclick=closeStory;toast('Conversation saved. Complete a mission to earn points.');});
 $('close').onclick=closeStory;$('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))closeStory();});document.addEventListener('keydown',e=>{if(e.key==='Escape')closeStory();});
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render();});
 render();
@@ -207,6 +224,7 @@ function undoQuest(id){
 }
 function renderGameSystems(){
  if(!$('dailyQuests'))return;
+ if($('charmRuns'))updateCharmRuns();
  const done=Object.keys(scoreState.done||{}).length;
  const earned=Object.values(scoreState.done||{}).reduce((a,b)=>a+Number(b||0),0);
  $('dailySummary').textContent=done+'/'+QUESTS.length+' completed today · +'+earned+' mission points';
@@ -229,6 +247,25 @@ $('redFlags').addEventListener('click',e=>{const b=e.target.closest('[data-flag]
 $('unlockGallery').addEventListener('click',e=>{const u=e.target.closest('[data-unlock]');if(u){const i=Number(u.dataset.unlock),next=UNLOCKS[scoreState.unlockedCount];if(i!==scoreState.unlockedCount||!next||points<next.at)return;scoreState.unlockedCount++;scoreState.selected=next.id;persist();renderGameSystems();toast(next.name+' portrait unlocked!');return}const b=e.target.closest('[data-select]');if(b){scoreState.selected=b.dataset.select;persist();renderGameSystems()}});
 $('bonusForm').addEventListener('submit',e=>{e.preventDefault();const reason=$('bonusReason').value.trim(),amount=Math.round(Number($('bonusPoints').value));if(!reason||!Number.isFinite(amount)||amount<1||amount>5000)return toast('Enter a reason and 1 to 5,000 points.');$('bonusReason').value='';$('bonusPoints').value='';addScore(amount,reason);renderGameSystems()});
 $('meetBtn').onclick=()=>openStory(scoreState.selected||'reina');
+
+let charmRun=null,earnedCache=0;
+function updateCharmRuns(){const used=Number(scoreState.charmRuns||0);$('charmRuns').textContent=Math.max(0,3-used)+' runs remaining today';$('charmStart').disabled=used>=3||!!charmRun;}
+$('charmStart').addEventListener('click',()=>{
+ if(charmRun||Number(scoreState.charmRuns||0)>=3)return;
+ scoreState.charmRuns=(Number(scoreState.charmRuns)||0)+1;persist();let left=30;earnedCache=0;
+ $('charmPlayfield').querySelectorAll('.charm-heart').forEach(x=>x.remove());
+ $('charmStart').style.display='none';$('charmTimer').textContent=left;$('charmRunScore').textContent='+0';
+ const spawn=()=>{if(!charmRun)return;const roll=Math.random(),kind=roll<.12?'bad':roll<.24?'gold':'red',b=document.createElement('button');b.className='charm-heart';b.type='button';b.textContent=kind==='bad'?'💔':kind==='gold'?'💛':'❤️';b.style.left=(8+Math.random()*82)+'%';b.style.top=(25+Math.random()*62)+'%';b.addEventListener('click',()=>{if(!charmRun)return;const v=kind==='bad'?-15:kind==='gold'?25:5;earnedCache=Math.max(0,earnedCache+v);$('charmRunScore').textContent='+'+earnedCache;b.remove()});$('charmPlayfield').appendChild(b);setTimeout(()=>b.remove(),1450)};
+ charmRun={spawn:setInterval(spawn,520),tick:setInterval(()=>{left--;$('charmTimer').textContent=left;if(left<=0)finishCharm()},1000)};
+ spawn();updateCharmRuns();
+});
+function finishCharm(){
+ if(!charmRun)return;clearInterval(charmRun.spawn);clearInterval(charmRun.tick);charmRun=null;
+ $('charmPlayfield').querySelectorAll('.charm-heart').forEach(x=>x.remove());$('charmStart').style.display='block';$('charmTimer').textContent='30';
+ if(earnedCache>0)addScore(earnedCache,'Charm challenge');else toast('No points this round. Try again tomorrow.');
+ updateCharmRuns();
+}
+
 renderGameSystems();
 
 </script>
