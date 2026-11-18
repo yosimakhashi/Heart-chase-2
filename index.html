@@ -37,6 +37,57 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
 @media(max-width:800px){.cast-strip{grid-template-columns:repeat(3,minmax(0,1fr))}.stage{height:430px}}
 @media(max-width:540px){.world{padding:14px;margin:18px 0}.world-top h2{font-size:25px}.stage{height:390px}.stage-bottom{gap:6px;bottom:12px}.stage-btn{padding:9px 11px;font-size:8px}.drag-hint{bottom:62px;font-size:7px}.cast-strip{grid-template-columns:repeat(2,minmax(0,1fr))}.cast-chip{padding:7px}.cast-chip img{width:38px;height:44px}.scene-status{font-size:8px;padding:7px}.stage-label{top:12px;font-size:8px}.stage-label.left{left:12px}.stage-label.right{right:12px}}
 
+
+/* Single-character portrait and sequential unlock gallery */
+.single-portrait{position:relative;width:min(100%,520px);height:clamp(390px,68vw,590px);margin:18px auto 0;border:1px solid #ff6ca655;border-radius:20px;overflow:hidden;background:radial-gradient(ellipse at 50% 35%,#57304d,#171020 72%);box-shadow:0 18px 55px #0008}
+.single-portrait img{width:100%;height:100%;object-fit:contain;object-position:center bottom;display:block}
+.portrait-caption{position:absolute;left:0;right:0;bottom:0;padding:44px 18px 16px;background:linear-gradient(transparent,#100b19ed);display:flex;flex-direction:column;gap:4px}
+.portrait-caption strong{font:600 25px 'Playfair Display';letter-spacing:.08em}
+.portrait-caption span{font:9px 'DM Mono';letter-spacing:.17em;color:#ff9bc0}
+.portrait-actions{display:flex;justify-content:center;margin-top:14px}
+.unlock-section,.score-system{margin:30px 0;background:#ffffff06;border:1px solid var(--line);border-radius:20px;padding:20px}
+.unlock-progress{padding:16px;border:1px solid #ad8aff55;background:#ad8aff0d;border-radius:14px;margin-bottom:16px}
+.unlock-progress-top{display:flex;justify-content:space-between;gap:10px;font:10px 'DM Mono';letter-spacing:.1em;color:var(--muted)}
+.unlock-progress-top strong{color:var(--pink)}
+.unlock-track{height:8px;background:#ffffff16;border-radius:20px;margin:12px 0 8px;overflow:hidden}
+.unlock-track i{display:block;height:100%;width:0;background:linear-gradient(90deg,#ff5c9a,#ad8aff);transition:width .25s}
+.unlock-progress p{font-size:11px;color:var(--muted);margin:0}
+.unlock-grid{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:10px}
+.unlock-card{min-width:0;border:1px solid var(--line);border-radius:13px;overflow:hidden;background:#100b19;text-align:center}
+.unlock-art{height:150px;position:relative;background:linear-gradient(145deg,#302039,#120d1b);display:grid;place-items:center}
+.unlock-art img{width:100%;height:100%;object-fit:cover;display:block}
+.unlock-art.locked:after{content:'🔒';position:absolute;inset:0;display:grid;place-items:center;background:#090711b8;font-size:28px;backdrop-filter:blur(3px)}
+.unlock-card strong{display:block;font:600 13px 'Playfair Display';padding:9px 4px 2px}
+.unlock-card small{display:block;color:var(--muted);font:8px 'DM Mono';padding:0 3px 8px}
+.unlock-card button{width:calc(100% - 12px);margin:0 6px 8px;padding:8px 4px;border-radius:8px;background:#ff5c9a1a;border:1px solid #ff5c9a77;color:#ffdce9;font-size:9px;font-weight:800}
+.unlock-card button:disabled{opacity:.5;cursor:not-allowed}
+.daily-summary{font:11px 'DM Mono';color:var(--pink);margin:-4px 0 14px}
+.mission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
+.mission-btn{display:flex;align-items:center;gap:10px;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:#ffffff08;color:var(--cream);min-height:66px}
+.mission-btn.done{border-color:#7be0a477;background:#7be0a411}
+.mission-btn .mission-ic{font-size:20px}
+.mission-btn .mission-copy{flex:1;min-width:0}
+.mission-btn strong{display:block;font-size:11px}
+.mission-btn small{display:block;color:var(--pink);font:10px 'DM Mono';margin-top:4px}
+.mission-btn .mission-check{font-size:16px;color:#7be0a4}
+.penalty-head{margin-top:24px}
+.penalty-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px}
+.penalty-btn{display:flex;justify-content:space-between;gap:8px;text-align:left;padding:11px;border-radius:10px;border:1px solid #ff6b6b44;background:#ff6b6b0a;color:#f5dce3;font-size:10px}
+.penalty-btn b{color:#ff8b8b;white-space:nowrap}
+.bonus-form{margin-top:18px;padding:15px;border:1px solid #ad8aff44;border-radius:14px;background:#ad8aff0a;display:grid;gap:9px}
+.bonus-form strong{display:block;font:600 16px 'Playfair Display'}
+.bonus-form small{color:var(--muted);font-size:10px}
+.bonus-form input{min-width:0;width:100%;background:#100b19;border:1px solid var(--line);border-radius:8px;padding:11px;color:var(--cream);font:12px Manrope}
+.bonus-row{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.bonus-row .primary{width:100%}
+.score-log{margin-top:22px;border-top:1px solid var(--line);padding-top:14px}
+.log-head{display:flex;justify-content:space-between;gap:10px;margin-bottom:8px;font-size:12px}
+.log-head span{font:9px 'DM Mono';color:var(--pink)}
+.log-entry{display:flex;justify-content:space-between;gap:10px;padding:9px 2px;border-bottom:1px solid #ffffff0c;font-size:10px;color:#c9bacd}
+.log-entry b{white-space:nowrap;color:#7be0a4;font:10px 'DM Mono'}
+.log-entry b.negative{color:#ff8b8b}
+@media(max-width:650px){.unlock-section,.score-system{padding:13px}.unlock-grid{grid-template-columns:repeat(3,minmax(0,1fr))}.unlock-art{height:130px}.mission-grid,.penalty-grid{grid-template-columns:1fr}.single-portrait{height:430px}.unlock-progress-top{font-size:8px}}
+
 </style>
 </head>
 <body>
@@ -58,17 +109,26 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
 <div class="section-head"><div><h2 id="sectionTitle">Meet someone new</h2><p id="sectionDesc">Ten distinct personalities. Countless possible beginnings.</p></div><div class="eyebrow">01 / 10</div></div>
 
 <section class="world">
- <div class="world-top"><div><div class="eyebrow">✦ YOUR STORY BEGINS HERE</div><h2>First encounter</h2><p>Meet the characters in a living 3D scene. Drag to rotate the view.</p></div><div class="scene-status"><i></i> WORLD ONLINE</div></div>
- <div class="stage">
-  <div class="stage-glow"></div><div class="stage-label left">YOUR COMPANION <b id="girlLabel">REINA</b></div><div class="stage-label right">PLAYER AVATAR <b>ASIF</b></div>
-  <div id="threeScene" aria-label="Interactive 3D scene with a fictional adult woman and male player avatar"></div>
-  <div class="stage-bottom"><button class="stage-btn" id="rotateBtn">⟳ AUTO ROTATE: ON</button><button class="stage-btn" id="meetBtn">♡ TALK TO REINA</button><button class="stage-btn" id="swapBtn">⇄ CHANGE CHARACTER</button></div>
-  <div class="drag-hint">DRAG TO ROTATE · SCROLL TO ZOOM</div>
- </div>
- <div class="world-note"><span>✧</span> All characters are fictional adults. Select a character below to change the scene and start a conversation.</div>
+ <div class="world-top"><div><div class="eyebrow">✦ YOUR CURRENT STORY</div><h2 id="activeGirlName">Reina</h2><p id="activeGirlRole">THE ELITE MENTOR</p></div><div class="scene-status"><i></i> CHARACTER GALLERY</div></div>
+ <div class="single-portrait" id="singlePortrait"><img id="activeGirlImage" src="assets/01_Reina_Elite_Mentor.jpg" alt="Reina, fictional adult character"><div class="portrait-caption"><strong id="portraitName">REINA</strong><span id="portraitSubtitle">YOUR CURRENT CHARACTER</span></div></div>
+ <div class="portrait-actions"><button class="stage-btn" id="meetBtn">♡ TALK TO REINA</button></div>
+ <div class="world-note"><span>✧</span> One character at a time. Earn points to reveal the next portrait in the gallery.</div>
 </section>
-<section class="cast-picker"><div class="section-head"><div><h2>Choose who you meet</h2><p>Full-body 3D characters with rotatable views.</p></div></div><div class="cast-strip" id="castStrip"></div></section>
-
+<section class="unlock-section">
+ <div class="section-head"><div><h2>Locked portraits</h2><p>Five images. Five milestones. Unlock them one at a time.</p></div></div>
+ <div class="unlock-progress"><div class="unlock-progress-top"><span id="unlockCount">0 / 5 UNLOCKED</span><strong id="unlockScore">0 / 5,000 POINTS</strong></div><div class="unlock-track"><i id="unlockFill"></i></div><p id="unlockHint">Earn 1,000 points to unlock your first portrait.</p></div>
+ <div class="unlock-grid" id="unlockGallery"></div>
+</section>
+<section class="score-system">
+ <div class="section-head"><div><h2>Daily missions</h2><p>Complete real-life actions to earn points. Each mission can be claimed once per day.</p></div></div>
+ <div class="daily-summary" id="dailySummary"></div>
+ <div class="mission-grid" id="dailyQuests"></div>
+ <div class="section-head penalty-head"><div><h2>Red flags</h2><p>Honest accountability. These actions deduct points.</p></div></div>
+ <div class="penalty-grid" id="redFlags"></div>
+ <form id="bonusForm" class="bonus-form"><div><strong>Extra points</strong><small>Reward a meaningful action not listed above.</small></div><input id="bonusReason" type="text" maxlength="80" placeholder="What did you accomplish?" required><div class="bonus-row"><input id="bonusPoints" type="number" min="1" max="5000" step="1" placeholder="Points" required><button class="primary" type="submit">ADD POINTS</button></div></form>
+ <div class="score-log"><div class="log-head"><strong>Score history</strong><span id="logTotal">0 TOTAL</span></div><div id="scoreLog"></div></div>
+</section>
+<section class="cast-picker" style="display:none"><div class="cast-strip" id="castStrip"></div></section>
 <main class="grid" id="characters"></main>
 <footer><span>HEART CHASE II © 2026</span><span>FICTIONAL CHARACTERS · MADE FOR THE CURIOUS</span></footer>
 </div>
@@ -76,7 +136,7 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
  <div class="dialog"><button class="close" id="close" aria-label="Close">×</button><div class="dialog-art"><img id="dialogImg" alt=""></div><div class="dialog-content"><div class="sub" id="dialogRole"></div><h2 id="dialogName"></h2><p id="dialogBio"></p><div class="speech" id="speech"></div><div class="choices" id="choices"></div></div></div>
 </div>
 <div class="toast" id="toast"></div>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+
 <script>
 const cast=[
 {id:'reina',name:'Reina',age:28,role:'THE ELITE MENTOR',bio:"A poised mentor with a commanding presence, sharp instincts and a softer side few people see.",traits:["Confident","Elegant","Perceptive"],image:'assets/01_Reina_Elite_Mentor.jpg',intro:"She closes her notebook and gives you a measured look.",line:"You seem to have a question. Are you going to ask it, or keep wondering?",choices:["I was waiting for the right moment.","Then let's make this the right moment. Go on."]},
@@ -91,9 +151,25 @@ const cast=[
 {id:'isabelle',name:'Isabelle',age:28,role:'THE ROYAL QUEEN',bio:"A poised royal heir balancing duty with a longing to discover the world beyond palace walls.",traits:["Regal","Clever","Independent"],image:'assets/10_Isabelle_Royal_Queen.jpg',intro:"Isabelle steps onto the balcony, leaving the ceremony lights behind her.",line:"If nobody expected anything of you, what would you choose to do?",choices:["Travel without an itinerary.","A tempting freedom. Perhaps one day I shall try it."]},
 ];
 let saved=JSON.parse(localStorage.getItem('hc2_saved')||'[]'), played=JSON.parse(localStorage.getItem('hc2_played')||'[]'), points=Number(localStorage.getItem('hc2_points')||0), filter='all', active=null;
+const SCORE_KEY='hc2_progress';
+const OLD_HEART_SAVE=(()=>{try{return JSON.parse(localStorage.getItem('heart-quest-v1')||'null')}catch(e){return null}})();
+const QUESTS=[
+{id:'gym',ic:'💪',name:'Hit the gym',pts:150},{id:'read',ic:'📚',name:'Read 20 pages',pts:100},{id:'dress',ic:'🧴',name:'Groomed & dressed sharp',pts:80},{id:'learn',ic:'🧠',name:'Learned a new skill',pts:120},{id:'talk',ic:'💬',name:'Talked to her first',pts:200},{id:'food',ic:'🥗',name:'Ate clean',pts:80},{id:'sleep',ic:'😴',name:'Slept before midnight',pts:80},{id:'scroll',ic:'📵',name:'No doomscrolling',pts:100},{id:'money',ic:'💼',name:'Grinded on career / money',pts:150},{id:'calm',ic:'🧘',name:'Meditated / prayed',pts:60}
+];
+const FLAGS=[{name:'Acted needy / desperate',pts:-150},{name:'Skipped all my quests',pts:-100},{name:'Was rude or lost my temper',pts:-200},{name:'Lied or broke a promise',pts:-300},{name:'Wasted the whole day',pts:-120}];
+const UNLOCKS=[{id:'maya',name:'Maya',role:'THE PLAYFUL IDOL',image:'assets/02_Maya_Playful_Idol.jpg',at:1000},{id:'elara',name:'Elara',role:'THE MYSTICAL ELF',image:'assets/03_Elara_Mystical_Elf.jpg',at:2000},{id:'nandini',name:'Nandini',role:'THE TRADITIONAL BEAUTY',image:'assets/04_Nandini_Traditional_Beauty.jpg',at:3000},{id:'vex',name:'Vex',role:'THE REBEL BIKER',image:'assets/05_Vex_Rebel_Biker.jpg',at:4000},{id:'sera',name:'Sera',role:'THE SWEET NEIGHBOUR',image:'assets/06_Sera_Sweet_Neighbor.jpg',at:5000}];
+function dateKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+function dayBefore(k){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
+const savedScore=(()=>{try{return JSON.parse(localStorage.getItem(SCORE_KEY)||'null')}catch(e){return null}})();
+let scoreState=savedScore&&typeof savedScore==='object'?savedScore:{total:Math.max(points,Number(OLD_HEART_SAVE?.total||OLD_HEART_SAVE?.points||0)),date:dateKey(),done:{},streak:0,lastStreak:'',log:[],unlockedCount:0,selected:'reina'};
+scoreState.total=Math.max(Number(scoreState.total)||0,points,Number(OLD_HEART_SAVE?.total||0));
+scoreState.unlockedCount=Math.max(0,Math.min(5,Number(scoreState.unlockedCount)||0));
+if(scoreState.date!==dateKey()){scoreState.date=dateKey();scoreState.done={};}
+points=scoreState.total;
+
 const $=id=>document.getElementById(id);
-function persist(){localStorage.setItem('hc2_saved',JSON.stringify(saved));localStorage.setItem('hc2_played',JSON.stringify(played));localStorage.setItem('hc2_points',String(points));}
-function stats(){$('connections').innerHTML=String(played.length).padStart(2,'0')+' <span>made</span>';$('favourites').innerHTML=String(saved.length).padStart(2,'0')+' <span>saved</span>';$('points').innerHTML=String(points).padStart(3,'0')+' <span>✦</span>';}
+function persist(){scoreState.total=points;localStorage.setItem('hc2_saved',JSON.stringify(saved));localStorage.setItem('hc2_played',JSON.stringify(played));localStorage.setItem('hc2_points',String(points));localStorage.setItem(SCORE_KEY,JSON.stringify(scoreState));}
+function stats(){$('connections').innerHTML=String(played.length).padStart(2,'0')+' <span>made</span>';$('favourites').innerHTML=String(saved.length).padStart(2,'0')+' <span>saved</span>';$('points').innerHTML=Number(points).toLocaleString('en-IN')+' <span>✦</span>';if($('unlockGallery'))renderGameSystems();}
 function render(){let list=cast.filter(c=>filter==='saved'?saved.includes(c.id):filter==='story'?played.includes(c.id):true);$('sectionTitle').textContent=filter==='saved'?'Your favourites':filter==='story'?'Your story so far':'Meet someone new';$('sectionDesc').textContent=filter==='saved'?'The characters you want to meet again.':filter==='story'?'Every conversation leaves a little trace.':'Ten distinct personalities. Countless possible beginnings.';$('characters').innerHTML=list.length?list.map(c=>`<article class="card"><div class="portrait"><img src="${c.image}" alt="Portrait of fictional character ${c.name}" loading="lazy"><span class="tag">${c.role}</span><button class="heart ${saved.includes(c.id)?'saved':''}" data-save="${c.id}" aria-label="Toggle favourite">${saved.includes(c.id)?'♥':'♡'}</button></div><div class="card-body"><div class="name-line"><h3>${c.name}</h3><span class="age">${c.age} YEARS</span></div><div class="role">${c.role}</div><div class="bio">${c.bio}</div><div class="traits">${c.traits.map(t=>'<span>'+t+'</span>').join('')}</div><button class="primary" data-meet="${c.id}">${played.includes(c.id)?'CONTINUE STORY':'START A CONVERSATION'} &nbsp; ↗</button></div></article>`).join(''):'<div class="empty">Nothing here yet. Explore the characters and save someone you like. ♡</div>';stats();}
 function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800);}
 function openStory(id){active=cast.find(c=>c.id===id);if(!active)return;$('dialogImg').src=active.image;$('dialogImg').alt='Portrait of '+active.name;$('dialogRole').textContent=active.role+' · '+active.age;$('dialogName').textContent=active.name;$('dialogBio').textContent=active.intro;$('speech').textContent='“'+active.line+'”';$('choices').innerHTML=active.choices.map((ch,i)=>'<button class="choice" data-choice="'+i+'">'+ch[0]+'</button>').join('');$('overlay').classList.add('show');document.body.style.overflow='hidden';}
@@ -104,100 +180,56 @@ $('close').onclick=closeStory;$('overlay').addEventListener('click',e=>{if(e.tar
 document.querySelectorAll('[data-filter]').forEach(b=>b.onclick=()=>{filter=b.dataset.filter;document.querySelectorAll('[data-filter]').forEach(x=>x.classList.toggle('active',x===b));render();});
 render();
 
-function initWorld(){
- if(!window.THREE){$('threeScene').innerHTML='<p style="padding:30px;color:#fff">3D scene could not load. Please refresh with an internet connection.</p>';return;}
- const T=window.THREE, host=$('threeScene');
- const scene=new T.Scene();scene.fog=new T.Fog(0x171126,9,22);
- const camera=new T.PerspectiveCamera(34,1,.1,100);camera.position.set(0,2.05,8.2);
- const renderer=new T.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;host.appendChild(renderer.domElement);
- scene.add(new T.HemisphereLight(0xffd9ee,0x27203b,2.1));
- const key=new T.DirectionalLight(0xffe4f0,3.2);key.position.set(-4,7,6);scene.add(key);
- const rim=new T.PointLight(0xff5d9d,18,12);rim.position.set(3,4,-3);scene.add(rim);
- const fill=new T.PointLight(0x9a80ff,11,12);fill.position.set(-4,2,3);scene.add(fill);
- const floor=new T.Mesh(new T.CircleGeometry(6,64),new T.MeshStandardMaterial({color:0x25182e,roughness:.35,metalness:.25}));floor.rotation.x=-Math.PI/2;floor.position.y=-.03;scene.add(floor);
- const ring=new T.Mesh(new T.TorusGeometry(2.15,.018,8,100),new T.MeshBasicMaterial({color:0xe47db4,transparent:true,opacity:.45}));ring.rotation.x=Math.PI/2;ring.position.y=.015;scene.add(ring);
- const mat=(color,metal=0,rough=.35)=>new T.MeshStandardMaterial({color,metalness:metal,roughness:rough});
- const skin=mat(0xc98268,0,.48), skin2=mat(0x9b604d,0,.48), hair=mat(0x211522,.15,.25), hair2=mat(0x392033,.2,.22), dress=mat(0xd83e83,.65,.17), dress2=mat(0x8c59c9,.72,.16), black=mat(0x191522,.25,.28), gold=mat(0xd6a65b,.75,.2), white=mat(0xf3d7e5,.1,.28);
- function sphere(parent,x,y,z,sx,sy,sz,m){let o=new T.Mesh(new T.SphereGeometry(1,24,18),m);o.position.set(x,y,z);o.scale.set(sx,sy,sz);parent.add(o);return o}
- function cyl(parent,x,y,z,r1,r2,h,m){let o=new T.Mesh(new T.CylinderGeometry(r1,r2,h,24),m);o.position.set(x,y,z);parent.add(o);return o}
- function limb(parent,a,b,r,m){let v1=new T.Vector3(...a),v2=new T.Vector3(...b),d=new T.Vector3().subVectors(v2,v1);let o=new T.Mesh(new T.CylinderGeometry(r*.82,r,d.length(),16),m);o.position.copy(v1).add(v2).multiplyScalar(.5);o.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());parent.add(o);sphere(parent,...a,r,r,r,m);sphere(parent,...b,r*.86,r*.86,r*.86,m)}
- function lathe(parent,points,m){let o=new T.Mesh(new T.LatheGeometry(points.map(p=>new T.Vector2(p[0],p[1])),48),m);parent.add(o);return o}
- // Use the uploaded character artwork in the 3D scene instead of the old
- // primitive female model. The portrait is mounted on a lit display plane.
- const textureLoader=new T.TextureLoader();
- const womanGroup=new T.Group();
- function makeWoman(index=0){
-  const g=new T.Group();
-  const c=cast[index]||cast[0];
-  const frame=new T.Mesh(new T.PlaneGeometry(2.05,3.35),new T.MeshStandardMaterial({color:0x29172d,metalness:.55,roughness:.28}));
-  frame.position.z=-.045;g.add(frame);
-  const glow=new T.Mesh(new T.PlaneGeometry(2.13,3.43),new T.MeshBasicMaterial({color:0xff72b1,transparent:true,opacity:.12}));
-  glow.position.z=-.07;g.add(glow);
-  textureLoader.load(c.image,tex=>{
-   tex.colorSpace=T.SRGBColorSpace;
-   const art=new T.Mesh(new T.PlaneGeometry(1.98,3.28),new T.MeshBasicMaterial({map:tex,side:T.DoubleSide}));
-   art.position.z=.012;g.add(art);
-  },undefined,err=>console.warn('Could not load character artwork:',c.image,err));
-  // Small floor pedestal anchors the portrait in the shared scene.
-  const base=new T.Mesh(new T.CylinderGeometry(.72,.82,.12,48),mat(0x39213b,.65,.24));
-  base.position.y=-1.72;g.add(base);
-  const halo=new T.Mesh(new T.TorusGeometry(.68,.018,8,64),new T.MeshBasicMaterial({color:0xff82bb,transparent:true,opacity:.8}));
-  halo.rotation.x=Math.PI/2;halo.position.y=-1.65;g.add(halo);
-  g.userData.type='portrait';return g;
- }
- function makeMan(){
-  const g=new T.Group();
-  const jacket=mat(0x29243c,.25,.3), shirt=mat(0xe8d9e8,.05,.5), trousers=mat(0x171725,.15,.42), shoes=mat(0x090a12,.2,.3), face=mat(0x9b604d,0,.5), hairMat=mat(0x17121c,.1,.3);
-  function capsuleBetween(p1,p2,r,material){
-   const start=new T.Vector3(...p1),end=new T.Vector3(...p2),dir=new T.Vector3().subVectors(end,start);
-   const mesh=new T.Mesh(new T.CapsuleGeometry(r,Math.max(.01,dir.length()-2*r),6,12),material);
-   mesh.position.copy(start).add(end).multiplyScalar(.5);
-   mesh.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),dir.normalize());g.add(mesh);
-  }
-  // Tailored silhouette with separated jacket, trousers, shoes and articulated limbs.
-  capsuleBetween([-.16,1.02,0],[-.17,.19,0],.105,trousers);
-  capsuleBetween([.16,1.02,0],[.17,.19,0],.105,trousers);
-  sphere(g,-.17,.11,.12,.16,.09,.25,shoes);sphere(g,.17,.11,.12,.16,.09,.25,shoes);
-  const torso=new T.Mesh(new T.CapsuleGeometry(.32,.55,8,20),jacket);torso.position.set(0,1.48,0);torso.scale.set(1,.95,.72);g.add(torso);
-  // Shirt inset and jacket lapels add readable clothing contrast.
-  const shirtFront=new T.Mesh(new T.PlaneGeometry(.25,.72),shirt);shirtFront.position.set(0,1.52,.235);g.add(shirtFront);
-  const lapelGeo=new T.BufferGeometry();lapelGeo.setAttribute('position',new T.Float32BufferAttribute([-.28,1.88,.24,-.04,1.48,.27,-.22,1.18,.22,.28,1.88,.24,.04,1.48,.27,.22,1.18,.22],3));lapelGeo.setIndex([0,1,2,3,4,5]);lapelGeo.computeVertexNormals();
-  const lapels=new T.Mesh(lapelGeo,new T.MeshStandardMaterial({color:0xb6a2c6,side:T.DoubleSide,metalness:.15,roughness:.5}));g.add(lapels);
-  capsuleBetween([-.29,1.82,0],[-.48,1.12,.03],.085,jacket);capsuleBetween([.29,1.82,0],[.48,1.12,.03],.085,jacket);
-  capsuleBetween([-.48,1.12,.03],[-.52,1.02,.1],.07,face);capsuleBetween([.48,1.12,.03],[.52,1.02,.1],.07,face);
-  const neck=new T.Mesh(new T.CylinderGeometry(.105,.12,.2,20),face);neck.position.set(0,1.98,0);g.add(neck);
-  sphere(g,0,2.25,0,.235,.29,.22,face);
-  // Hair, ears and facial features make the head legible at scene scale.
-  sphere(g,0,2.46,-.025,.245,.16,.23,hairMat);
-  sphere(g,-.225,2.26,0,.045,.075,.055,face);sphere(g,.225,2.26,0,.045,.075,.055,face);
-  sphere(g,-.082,2.27,.205,.025,.018,.018,mat(0x17121c));
-  sphere(g,.082,2.27,.205,.025,.018,.018,mat(0x17121c));
-  sphere(g,0,2.17,.218,.035,.025,.025,mat(0x6c3e3b));
-  const belt=new T.Mesh(new T.TorusGeometry(.25,.018,6,32),mat(0xc6a36a,.7,.25));belt.position.set(0,1.13,0);belt.rotation.x=Math.PI/2;g.add(belt);
-  return g;
- }
- const pair=new T.Group();scene.add(pair);
- let woman=makeWoman(0),man=makeMan();
- woman.position.set(-1.35,1.82,0);woman.scale.setScalar(1.05);
- man.position.set(1.3,0,0);man.scale.setScalar(1.12);
- pair.add(woman,man);
- const stars=new T.Group();for(let i=0;i<80;i++){let p=new T.Mesh(new T.SphereGeometry(.012,6,6),new T.MeshBasicMaterial({color:i%2?0xff8fbe:0xb8a2ff,transparent:true,opacity:.65}));p.position.set((Math.random()-.5)*9,Math.random()*4.5+.3,(Math.random()-.5)*3-1);stars.add(p)}scene.add(stars);
- let dragging=false,lastX=0,auto=true,zoom=8.2;
- function resize(){let w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();
- host.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;host.setPointerCapture(e.pointerId)});
- host.addEventListener('pointermove',e=>{if(!dragging)return;pair.rotation.y+=(e.clientX-lastX)*.009;lastX=e.clientX;});
- host.addEventListener('pointerup',()=>dragging=false);host.addEventListener('pointercancel',()=>dragging=false);
- host.addEventListener('wheel',e=>{zoom=Math.max(6.2,Math.min(11,zoom+e.deltaY*.008));camera.position.z=zoom},{passive:true});
- $('rotateBtn').onclick=()=>{auto=!auto;$('rotateBtn').textContent='⟳ AUTO ROTATE: '+(auto?'ON':'OFF')};
- let chosen=0;
- function selectCharacter(i){chosen=i;let c=cast[i];$('girlLabel').textContent=c.name.toUpperCase();$('meetBtn').textContent='♡ TALK TO '+c.name.toUpperCase();if(woman)pair.remove(woman);let nw=makeWoman(i);nw.name='selectedWoman';nw.position.set(-1.35,1.82,0);nw.scale.setScalar(1.05);pair.add(nw);woman=nw;document.querySelectorAll('.cast-chip').forEach((b,j)=>b.classList.toggle('active',j===i));}
- $('meetBtn').onclick=()=>openStory(cast[chosen].id);
- $('swapBtn').onclick=()=>selectCharacter((chosen+1)%cast.length);
- $('castStrip').innerHTML=cast.map((c,i)=>'<button class="cast-chip '+(i===0?'active':'')+'" data-cast="'+i+'"><img src="'+c.image+'" alt=""><span><strong>'+c.name+'</strong><small>'+c.role+'</small></span></button>').join('');
- $('castStrip').addEventListener('click',e=>{let b=e.target.closest('[data-cast]');if(b)selectCharacter(Number(b.dataset.cast))});
- let clock=new T.Clock();function animate(){requestAnimationFrame(animate);let dt=Math.min(clock.getDelta(),.04);if(auto&&!dragging)pair.rotation.y+=dt*.18;stars.rotation.y+=dt*.012;renderer.render(scene,camera)}animate();
-}
 
-initWorld();
+// Heart Chase 2 progression: adapted from the original Heart Quest scoring rules.
+function addScore(amount,reason){
+ const before=points;points=Math.max(0,points+amount);const delta=points-before;
+ scoreState.total=points;scoreState.log.unshift({reason,delta,at:Date.now()});scoreState.log=scoreState.log.slice(0,30);
+ persist();stats();toast((delta>=0?'+':'')+delta+' points · '+reason);
+}
+function claimQuest(id){
+ const q=QUESTS.find(x=>x.id===id);if(!q)return;
+ if(scoreState.date!==dateKey()){scoreState.date=dateKey();scoreState.done={};}
+ if(scoreState.done[id]!=null)return;
+ scoreState.done[id]=q.pts;
+ addScore(q.pts,q.name);
+ if(scoreState.lastStreak!==dateKey()){
+  scoreState.streak=scoreState.lastStreak===dayBefore(dateKey())?scoreState.streak+1:1;
+  scoreState.lastStreak=dateKey();
+  const bonus=Math.min(scoreState.streak,10)*20;
+  addScore(bonus,'Day '+scoreState.streak+' streak bonus');
+ }
+ persist();renderGameSystems();
+}
+function undoQuest(id){
+ const q=QUESTS.find(x=>x.id===id);if(!q||scoreState.done[id]==null)return;
+ const value=scoreState.done[id];delete scoreState.done[id];addScore(-value,'Undid: '+q.name);renderGameSystems();
+}
+function renderGameSystems(){
+ if(!$('dailyQuests'))return;
+ const done=Object.keys(scoreState.done||{}).length;
+ const earned=Object.values(scoreState.done||{}).reduce((a,b)=>a+Number(b||0),0);
+ $('dailySummary').textContent=done+'/'+QUESTS.length+' completed today · +'+earned+' mission points';
+ $('dailyQuests').innerHTML=QUESTS.map(q=>{const yes=scoreState.done[q.id]!=null;return '<button class="mission-btn '+(yes?'done':'')+'" data-quest="'+q.id+'"><span class="mission-ic">'+q.ic+'</span><span class="mission-copy"><strong>'+q.name+'</strong><small>+'+q.pts+' POINTS</small></span><span class="mission-check">'+(yes?'✓':'＋')+'</span></button>'}).join('');
+ $('redFlags').innerHTML=FLAGS.map((f,i)=>'<button class="penalty-btn" data-flag="'+i+'"><span>'+f.name+'</span><b>'+f.pts+'</b></button>').join('');
+ const count=scoreState.unlockedCount||0,next=UNLOCKS[count],target=5000;
+ $('unlockCount').textContent=count+' / 5 UNLOCKED';
+ $('unlockScore').textContent=points.toLocaleString('en-IN')+' / '+target.toLocaleString('en-IN')+' POINTS';
+ $('unlockFill').style.width=Math.min(100,points/target*100)+'%';
+ $('unlockHint').textContent=count>=5?'All five bonus portraits unlocked. Every milestone cleared.':points>=next.at?'Milestone reached. Unlock '+next.name+' now, then the next portrait will wait for its own milestone.':'Next portrait: '+next.name+' at '+next.at.toLocaleString('en-IN')+' points · '+Math.max(0,next.at-points).toLocaleString('en-IN')+' to go.';
+ $('unlockGallery').innerHTML=UNLOCKS.map((u,i)=>{const open=i<count,ready=i===count&&points>=u.at;return '<article class="unlock-card"><div class="unlock-art '+(open?'':'locked')+'">'+(open?'<img src="'+u.image+'" alt="'+u.name+' portrait">':'')+'</div><strong>'+(open?u.name:'Portrait '+(i+1))+'</strong><small>'+(open?'UNLOCKED':u.at.toLocaleString('en-IN')+' POINTS')+'</small>'+(open?'<button data-select="'+u.id+'">VIEW PORTRAIT</button>':i===count?'<button data-unlock="'+i+'" '+(!ready?'disabled':'')+'>'+(ready?'UNLOCK NEXT':'LOCKED')+'</button>':'<button disabled>LOCKED</button>')+'</article>'}).join('');
+ const selected=cast.find(c=>c.id===scoreState.selected)||cast[0];
+ $('activeGirlImage').src=selected.image;$('activeGirlImage').alt=selected.name+' portrait';$('activeGirlName').textContent=selected.name;$('activeGirlRole').textContent=selected.role;$('portraitName').textContent=selected.name.toUpperCase();$('portraitSubtitle').textContent=scoreState.selected==='reina'?'YOUR STARTING CHARACTER':'UNLOCKED CHARACTER';
+ $('meetBtn').textContent='♡ TALK TO '+selected.name.toUpperCase();
+ $('logTotal').textContent=points.toLocaleString('en-IN')+' TOTAL';
+ $('scoreLog').innerHTML=(scoreState.log||[]).slice(0,8).map(x=>'<div class="log-entry"><span>'+x.reason+'</span><b class="'+(x.delta<0?'negative':'')+'">'+(x.delta>0?'+':'')+x.delta+'</b></div>').join('')||'<div class="log-entry"><span>No points earned yet. Complete a mission to begin.</span><b>0</b></div>';
+}
+$('dailyQuests').addEventListener('click',e=>{const b=e.target.closest('[data-quest]');if(!b)return;const id=b.dataset.quest;if(scoreState.done[id]!=null)undoQuest(id);else claimQuest(id)});
+$('redFlags').addEventListener('click',e=>{const b=e.target.closest('[data-flag]');if(!b)return;const f=FLAGS[Number(b.dataset.flag)];if(confirm('Deduct '+Math.abs(f.pts)+' points for: '+f.name+'?'))addScore(f.pts,'Red flag: '+f.name);renderGameSystems()});
+$('unlockGallery').addEventListener('click',e=>{const u=e.target.closest('[data-unlock]');if(u){const i=Number(u.dataset.unlock),next=UNLOCKS[scoreState.unlockedCount];if(i!==scoreState.unlockedCount||!next||points<next.at)return;scoreState.unlockedCount++;scoreState.selected=next.id;persist();renderGameSystems();toast(next.name+' portrait unlocked!');return}const b=e.target.closest('[data-select]');if(b){scoreState.selected=b.dataset.select;persist();renderGameSystems()}});
+$('bonusForm').addEventListener('submit',e=>{e.preventDefault();const reason=$('bonusReason').value.trim(),amount=Math.round(Number($('bonusPoints').value));if(!reason||!Number.isFinite(amount)||amount<1||amount>5000)return toast('Enter a reason and 1 to 5,000 points.');$('bonusReason').value='';$('bonusPoints').value='';addScore(amount,reason);renderGameSystems()});
+$('meetBtn').onclick=()=>openStory(scoreState.selected||'reina');
+renderGameSystems();
+
 </script>
 </body></html>
