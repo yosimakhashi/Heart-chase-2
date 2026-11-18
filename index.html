@@ -68,7 +68,7 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
 .unlock-card small{display:block;color:var(--muted);font:8px 'DM Mono';padding:0 3px 8px}
 .unlock-card button{width:calc(100% - 12px);margin:0 6px 8px;padding:8px 4px;border-radius:8px;background:#ff5c9a1a;border:1px solid #ff5c9a77;color:#ffdce9;font-size:9px;font-weight:800}
 .unlock-card button:disabled{opacity:.5;cursor:not-allowed}
-.daily-summary{font:11px 'DM Mono';color:var(--pink);margin:-4px 0 14px}
+.score-correction{margin-top:16px;padding:16px;border:1px solid #ff5c9a44;border-radius:14px;background:#ff5c9a0a}.score-correction>div:first-child strong{display:block;font-size:13px}.score-correction small{display:block;color:var(--muted);font-size:11px;line-height:1.5;margin-top:5px}.save-name{font:9px 'DM Mono';letter-spacing:.13em;color:var(--violet);margin:14px 0 8px}.score-correction form{display:flex;gap:8px}.score-correction input{flex:1;min-width:0;background:#100b19;border:1px solid var(--line);border-radius:9px;padding:11px;color:var(--cream);font:12px 'DM Mono'}.score-correction button{border:0;border-radius:9px;padding:10px 14px;background:linear-gradient(100deg,#ff5c9a,#bd73cb);color:#190e1b;font-size:10px;font-weight:900}@media(max-width:540px){.score-correction form{flex-direction:column}.score-correction button{min-height:42px}}.daily-summary{font:11px 'DM Mono';color:var(--pink);margin:-4px 0 14px}
 .mission-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:9px}
 .mission-btn{display:flex;align-items:center;gap:10px;text-align:left;padding:12px;border-radius:12px;border:1px solid var(--line);background:#ffffff08;color:var(--cream);min-height:66px}
 .mission-btn.done{border-color:#7be0a477;background:#7be0a411}
@@ -148,6 +148,7 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
  <form id="bonusForm" class="bonus-form"><div><strong>Extra points</strong><small>Reward a meaningful action not listed above.</small></div><input id="bonusReason" type="text" maxlength="80" placeholder="What did you accomplish?" required><div class="bonus-row"><input id="bonusPoints" type="number" min="1" max="10000" step="1" placeholder="Points" required><button class="primary" type="submit">ADD POINTS</button></div></form>
  <div class="charm-game"><div><strong>Charm challenge</strong><small>30 seconds · red hearts +5 · gold hearts +25 · broken hearts −15 · three runs daily</small></div><div class="charm-playfield" id="charmPlayfield"><span id="charmTimer">30</span><button type="button" id="charmStart">START CHALLENGE</button><strong id="charmRunScore">+0</strong></div><div class="charm-runs" id="charmRuns">3 runs remaining today</div></div>
  <div class="score-log"><div class="log-head"><strong>Score history</strong><span id="logTotal">0 TOTAL</span></div><div id="scoreLog"></div></div>
+ <div class="score-correction"><div><strong>Manual score correction</strong><small>Set your exact total if the score ever jumps or needs fixing. Your characters, favourites and mission history stay saved.</small></div><div class="save-name">ACTIVE SAVE · HEART CHASE II</div><form id="scoreCorrectionForm"><input id="correctedScore" type="number" min="0" max="1000000000" step="1" inputmode="numeric" placeholder="Enter your correct total" required><button type="submit">UPDATE SCORE</button></form></div>
 </section>
 <section class="cast-picker" style="display:none"><div class="cast-strip" id="castStrip"></div></section>
 <main class="grid" id="characters"></main>
@@ -173,7 +174,8 @@ const cast=[
 ];
 let saved=JSON.parse(localStorage.getItem('hc2_saved')||'[]'), played=JSON.parse(localStorage.getItem('hc2_played')||'[]'), points=Number(localStorage.getItem('hc2_points')||0), filter='all', active=null;
 const SCORE_KEY='hc2_progress';
-const OLD_HEART_SAVE=(()=>{try{return JSON.parse(localStorage.getItem('heart-quest-v1')||'null')}catch(e){return null}})();
+const SAVE_KEY='heart-chase-2-save-v1';
+const NAMED_SAVE='HEART CHASE II SAVE';
 const QUESTS=[
 {id:'gym',ic:'💪',name:'Hit the gym',pts:150},{id:'read',ic:'📚',name:'Read 20 pages',pts:100},{id:'dress',ic:'🧴',name:'Groomed & dressed sharp',pts:80},{id:'learn',ic:'🧠',name:'Learned a new skill',pts:120},{id:'talk',ic:'💬',name:'Talked to her first',pts:200},{id:'food',ic:'🥗',name:'Ate clean',pts:80},{id:'sleep',ic:'😴',name:'Slept before midnight',pts:80},{id:'scroll',ic:'📵',name:'No doomscrolling',pts:100},{id:'money',ic:'💼',name:'Grinded on career / money',pts:150},{id:'calm',ic:'🧘',name:'Meditated / prayed',pts:60}
 ];
@@ -181,9 +183,9 @@ const FLAGS=[{name:'Acted needy / desperate',pts:-150},{name:'Skipped all my que
 const UNLOCKS=[{id:'maya',name:'Maya',role:'THE PLAYFUL IDOL',image:'assets/02_Maya_Playful_Idol.jpg',at:1000},{id:'elara',name:'Elara',role:'THE MYSTICAL ELF',image:'assets/03_Elara_Mystical_Elf.jpg',at:2000},{id:'nandini',name:'Nandini',role:'THE TRADITIONAL BEAUTY',image:'assets/04_Nandini_Traditional_Beauty.jpg',at:3000},{id:'vex',name:'Vex',role:'THE REBEL BIKER',image:'assets/05_Vex_Rebel_Biker.jpg',at:4000},{id:'sera',name:'Sera',role:'THE SWEET NEIGHBOUR',image:'assets/06_Sera_Sweet_Neighbor.jpg',at:5000}];
 function dateKey(){const d=new Date();return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
 function dayBefore(k){const d=new Date(k+'T12:00:00');d.setDate(d.getDate()-1);return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0')}
-const savedScore=(()=>{try{return JSON.parse(localStorage.getItem(SCORE_KEY)||'null')}catch(e){return null}})();
-let scoreState=savedScore&&typeof savedScore==='object'?savedScore:{total:Math.max(points,Number(OLD_HEART_SAVE?.total||OLD_HEART_SAVE?.points||0)),date:dateKey(),done:{},streak:0,lastStreak:'',log:[],unlockedCount:0,selected:'reina'};
-scoreState.total=Math.max(Number(scoreState.total)||0,points,Number(OLD_HEART_SAVE?.total||0));
+const savedScore=(()=>{try{return JSON.parse(localStorage.getItem(SAVE_KEY)||localStorage.getItem(SCORE_KEY)||'null')}catch(e){return null}})();
+let scoreState=savedScore&&typeof savedScore==='object'?savedScore:{total:Math.max(0,points),date:dateKey(),done:{},streak:0,lastStreak:'',log:[],unlockedCount:0,selected:'reina'};
+scoreState.total=Math.max(0,Number(scoreState.total)||0);
 scoreState.done=scoreState.done&&typeof scoreState.done==='object'?scoreState.done:{};
 scoreState.log=Array.isArray(scoreState.log)?scoreState.log:[];
 scoreState.streak=Number(scoreState.streak)||0;
@@ -196,7 +198,7 @@ const REINA_POSES=Array.from({length:10},(_,i)=>({n:i+1,src:'assets/Reina_Pose_'
 let reinaPose=Math.max(1,Math.min(10,Number(localStorage.getItem('hc2_reina_pose')||1)||1));
 let reinaPoseUnlocked=Math.max(1,Math.min(10,Number(localStorage.getItem('hc2_reina_pose_unlocked')||0)||1));
 const $=id=>document.getElementById(id);
-function persist(){scoreState.total=points;localStorage.setItem('hc2_saved',JSON.stringify(saved));localStorage.setItem('hc2_played',JSON.stringify(played));localStorage.setItem('hc2_points',String(points));localStorage.setItem(SCORE_KEY,JSON.stringify(scoreState));}
+function persist(){scoreState.total=points;localStorage.setItem('hc2_saved',JSON.stringify(saved));localStorage.setItem('hc2_played',JSON.stringify(played));localStorage.setItem('hc2_points',String(points));localStorage.setItem(SCORE_KEY,JSON.stringify(scoreState));localStorage.setItem(SAVE_KEY,JSON.stringify(scoreState));}
 function stats(){$('connections').innerHTML=String(played.length).padStart(2,'0')+' <span>made</span>';$('favourites').innerHTML=String(saved.length).padStart(2,'0')+' <span>saved</span>';$('points').innerHTML=Number(points).toLocaleString('en-IN')+' <span>✦</span>';if($('unlockGallery'))renderGameSystems();}
 function render(){let list=cast.filter(c=>filter==='saved'?saved.includes(c.id):filter==='story'?played.includes(c.id):true);$('sectionTitle').textContent=filter==='saved'?'Your favourites':filter==='story'?'Your story so far':'Meet someone new';$('sectionDesc').textContent=filter==='saved'?'The characters you want to meet again.':filter==='story'?'Every conversation leaves a little trace.':'Ten distinct personalities. Countless possible beginnings.';$('characters').innerHTML=list.length?list.map(c=>`<article class="card"><div class="portrait"><img src="${c.image}" alt="Portrait of fictional character ${c.name}" loading="lazy"><span class="tag">${c.role}</span><button class="heart ${saved.includes(c.id)?'saved':''}" data-save="${c.id}" aria-label="Toggle favourite">${saved.includes(c.id)?'♥':'♡'}</button></div><div class="card-body"><div class="name-line"><h3>${c.name}</h3><span class="age">${c.age} YEARS</span></div><div class="role">${c.role}</div><div class="bio">${c.bio}</div><div class="traits">${c.traits.map(t=>'<span>'+t+'</span>').join('')}</div><button class="primary" data-meet="${c.id}">${played.includes(c.id)?'CONTINUE STORY':'START A CONVERSATION'} &nbsp; ↗</button></div></article>`).join(''):'<div class="empty">Nothing here yet. Explore the characters and save someone you like. ♡</div>';stats();}
 function toast(msg){$('toast').textContent=msg;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800);}
@@ -210,6 +212,16 @@ render();
 
 
 // Heart Chase 2 progression: adapted from the original Heart Quest scoring rules.
+$('scoreCorrectionForm').addEventListener('submit',e=>{
+ e.preventDefault();
+ const field=$('correctedScore'),next=Number(field.value);
+ if(!Number.isSafeInteger(next)||next<0||next>1000000000){toast('Enter a valid whole-number score.');return;}
+ const previous=points,delta=next-previous;
+ if(delta===0){toast('Your score is already '+next.toLocaleString('en-IN')+'.');return;}
+ if(!confirm('Change your Heart Chase II score from '+previous.toLocaleString('en-IN')+' to '+next.toLocaleString('en-IN')+'? Other progress will be kept.'))return;
+ points=next;scoreState.total=next;scoreState.log.unshift({reason:'Manual score correction',delta,at:Date.now()});scoreState.log=scoreState.log.slice(0,30);
+ persist();stats();renderGameSystems();field.value='';toast('Heart Chase II score corrected.');
+});
 function addScore(amount,reason){
  const before=points;points=Math.max(0,points+amount);const delta=points-before;
  scoreState.total=points;scoreState.log.unshift({reason,delta,at:Date.now()});scoreState.log=scoreState.log.slice(0,30);
