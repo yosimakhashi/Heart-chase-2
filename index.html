@@ -108,7 +108,7 @@ function initWorld(){
  if(!window.THREE){$('threeScene').innerHTML='<p style="padding:30px;color:#fff">3D scene could not load. Please refresh with an internet connection.</p>';return;}
  const T=window.THREE, host=$('threeScene');
  const scene=new T.Scene();scene.fog=new T.Fog(0x171126,9,22);
- const camera=new T.PerspectiveCamera(34,1,.1,100);camera.position.set(0,2.5,9.4);
+ const camera=new T.PerspectiveCamera(34,1,.1,100);camera.position.set(0,2.05,8.2);
  const renderer=new T.WebGLRenderer({antialias:true,alpha:true});renderer.setPixelRatio(Math.min(devicePixelRatio,2));renderer.outputColorSpace=T.SRGBColorSpace;renderer.toneMapping=T.ACESFilmicToneMapping;renderer.toneMappingExposure=1.25;host.appendChild(renderer.domElement);
  scene.add(new T.HemisphereLight(0xffd9ee,0x27203b,2.1));
  const key=new T.DirectionalLight(0xffe4f0,3.2);key.position.set(-4,7,6);scene.add(key);
@@ -122,54 +122,75 @@ function initWorld(){
  function cyl(parent,x,y,z,r1,r2,h,m){let o=new T.Mesh(new T.CylinderGeometry(r1,r2,h,24),m);o.position.set(x,y,z);parent.add(o);return o}
  function limb(parent,a,b,r,m){let v1=new T.Vector3(...a),v2=new T.Vector3(...b),d=new T.Vector3().subVectors(v2,v1);let o=new T.Mesh(new T.CylinderGeometry(r*.82,r,d.length(),16),m);o.position.copy(v1).add(v2).multiplyScalar(.5);o.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),d.normalize());parent.add(o);sphere(parent,...a,r,r,r,m);sphere(parent,...b,r*.86,r*.86,r*.86,m)}
  function lathe(parent,points,m){let o=new T.Mesh(new T.LatheGeometry(points.map(p=>new T.Vector2(p[0],p[1])),48),m);parent.add(o);return o}
- function makeWoman(outfit=0){
-  const g=new T.Group(), outfitMat=outfit%2?dress2:dress;
-  // legs and glossy heels
-  limb(g,[-.18,.95,0],[-.2,.18,0],.085,skin);limb(g,[.18,.95,0],[.2,.18,0],.085,skin);
-  sphere(g,-.2,.11,.12,.14,.08,.25,black);sphere(g,.2,.11,.12,.14,.08,.25,black);
-  // fitted glossy dress: shaped waist, bust and hips
-  lathe(g,[[.38,.72],[.48,.88],[.44,1.08],[.29,1.28],[.25,1.48],[.36,1.66],[.43,1.83],[.34,2.02],[.24,2.1]],outfitMat);
-  // shoulder straps / arms
-  limb(g,[-.39,1.94,0],[-.56,1.43,.02],.075,skin);limb(g,[.39,1.94,0],[.56,1.43,.02],.075,skin);
-  sphere(g,-.56,1.4,.02,.08,.1,.08,skin);sphere(g,.56,1.4,.02,.08,.1,.08,skin);
-  cyl(g,0,2.12,0,.11,.12,.18,skin);
-  sphere(g,0,2.42,0,.27,.33,.24,skin);
-  // hair cap and long flowing locks
-  sphere(g,0,2.57,-.045,.29,.25,.27,hair);
-  sphere(g,-.24,2.34,-.02,.09,.36,.13,hair2);sphere(g,.24,2.34,-.02,.09,.36,.13,hair2);
-  sphere(g,-.095,2.43,.213,.025,.018,.018,black);sphere(g,.095,2.43,.213,.025,.018,.018,black);
-  sphere(g,0,2.31,.22,.04,.025,.025,skin2);
-  // necklace and dress sheen accents
-  let necklace=new T.Mesh(new T.TorusGeometry(.15,.012,8,40),gold);necklace.position.set(0,2.02,.02);necklace.rotation.x=Math.PI/2;g.add(necklace);
-  sphere(g,0,1.76,.405,.045,.045,.018,gold);
-  g.userData.type='woman';return g;
+ // Use the uploaded character artwork in the 3D scene instead of the old
+ // primitive female model. The portrait is mounted on a lit display plane.
+ const textureLoader=new T.TextureLoader();
+ const womanGroup=new T.Group();
+ function makeWoman(index=0){
+  const g=new T.Group();
+  const c=cast[index]||cast[0];
+  const frame=new T.Mesh(new T.PlaneGeometry(2.05,3.35),new T.MeshStandardMaterial({color:0x29172d,metalness:.55,roughness:.28}));
+  frame.position.z=-.045;g.add(frame);
+  const glow=new T.Mesh(new T.PlaneGeometry(2.13,3.43),new T.MeshBasicMaterial({color:0xff72b1,transparent:true,opacity:.12}));
+  glow.position.z=-.07;g.add(glow);
+  textureLoader.load(c.image,tex=>{
+   tex.colorSpace=T.SRGBColorSpace;
+   const art=new T.Mesh(new T.PlaneGeometry(1.98,3.28),new T.MeshBasicMaterial({map:tex,side:T.DoubleSide}));
+   art.position.z=.012;g.add(art);
+  },undefined,err=>console.warn('Could not load character artwork:',c.image,err));
+  // Small floor pedestal anchors the portrait in the shared scene.
+  const base=new T.Mesh(new T.CylinderGeometry(.72,.82,.12,48),mat(0x39213b,.65,.24));
+  base.position.y=-1.72;g.add(base);
+  const halo=new T.Mesh(new T.TorusGeometry(.68,.018,8,64),new T.MeshBasicMaterial({color:0xff82bb,transparent:true,opacity:.8}));
+  halo.rotation.x=Math.PI/2;halo.position.y=-1.65;g.add(halo);
+  g.userData.type='portrait';return g;
  }
  function makeMan(){
   const g=new T.Group();
-  limb(g,[-.16,1.0,0],[-.17,.17,0],.105,black);limb(g,[.16,1.0,0],[.17,.17,0],.105,black);
-  sphere(g,-.17,.1,.12,.15,.08,.22,black);sphere(g,.17,.1,.12,.15,.08,.22,black);
-  cyl(g,0,1.57,0,.31,.37,.85,black);
-  sphere(g,0,1.95,0,.38,.24,.27,black);
-  limb(g,[-.35,1.88,0],[-.48,1.2,.08],.095,skin2);limb(g,[.35,1.88,0],[.48,1.2,.08],.095,skin2);
-  cyl(g,0,2.08,0,.12,.12,.18,skin2);sphere(g,0,2.37,0,.26,.31,.23,skin2);
-  sphere(g,0,2.51,-.04,.27,.2,.25,hair);sphere(g,-.19,2.37,-.02,.07,.22,.12,hair);
-  sphere(g,-.09,2.38,.205,.022,.018,.018,black);sphere(g,.09,2.38,.205,.022,.018,.018,black);
-  // jacket lapels
-  let lap1=new T.Mesh(new T.ConeGeometry(.15,.55,4),white);lap1.position.set(-.13,1.7,.29);lap1.rotation.z=.2;g.add(lap1);
-  let lap2=lap1.clone();lap2.position.x=.13;lap2.rotation.z=-.2;g.add(lap2);
+  const jacket=mat(0x29243c,.25,.3), shirt=mat(0xe8d9e8,.05,.5), trousers=mat(0x171725,.15,.42), shoes=mat(0x090a12,.2,.3), face=mat(0x9b604d,0,.5), hairMat=mat(0x17121c,.1,.3);
+  function capsuleBetween(p1,p2,r,material){
+   const start=new T.Vector3(...p1),end=new T.Vector3(...p2),dir=new T.Vector3().subVectors(end,start);
+   const mesh=new T.Mesh(new T.CapsuleGeometry(r,Math.max(.01,dir.length()-2*r),6,12),material);
+   mesh.position.copy(start).add(end).multiplyScalar(.5);
+   mesh.quaternion.setFromUnitVectors(new T.Vector3(0,1,0),dir.normalize());g.add(mesh);
+  }
+  // Tailored silhouette with separated jacket, trousers, shoes and articulated limbs.
+  capsuleBetween([-.16,1.02,0],[-.17,.19,0],.105,trousers);
+  capsuleBetween([.16,1.02,0],[.17,.19,0],.105,trousers);
+  sphere(g,-.17,.11,.12,.16,.09,.25,shoes);sphere(g,.17,.11,.12,.16,.09,.25,shoes);
+  const torso=new T.Mesh(new T.CapsuleGeometry(.32,.55,8,20),jacket);torso.position.set(0,1.48,0);torso.scale.set(1,.95,.72);g.add(torso);
+  // Shirt inset and jacket lapels add readable clothing contrast.
+  const shirtFront=new T.Mesh(new T.PlaneGeometry(.25,.72),shirt);shirtFront.position.set(0,1.52,.235);g.add(shirtFront);
+  const lapelGeo=new T.BufferGeometry();lapelGeo.setAttribute('position',new T.Float32BufferAttribute([-.28,1.88,.24,-.04,1.48,.27,-.22,1.18,.22,.28,1.88,.24,.04,1.48,.27,.22,1.18,.22],3));lapelGeo.setIndex([0,1,2,3,4,5]);lapelGeo.computeVertexNormals();
+  const lapels=new T.Mesh(lapelGeo,new T.MeshStandardMaterial({color:0xb6a2c6,side:T.DoubleSide,metalness:.15,roughness:.5}));g.add(lapels);
+  capsuleBetween([-.29,1.82,0],[-.48,1.12,.03],.085,jacket);capsuleBetween([.29,1.82,0],[.48,1.12,.03],.085,jacket);
+  capsuleBetween([-.48,1.12,.03],[-.52,1.02,.1],.07,face);capsuleBetween([.48,1.12,.03],[.52,1.02,.1],.07,face);
+  const neck=new T.Mesh(new T.CylinderGeometry(.105,.12,.2,20),face);neck.position.set(0,1.98,0);g.add(neck);
+  sphere(g,0,2.25,0,.235,.29,.22,face);
+  // Hair, ears and facial features make the head legible at scene scale.
+  sphere(g,0,2.46,-.025,.245,.16,.23,hairMat);
+  sphere(g,-.225,2.26,0,.045,.075,.055,face);sphere(g,.225,2.26,0,.045,.075,.055,face);
+  sphere(g,-.082,2.27,.205,.025,.018,.018,mat(0x17121c));
+  sphere(g,.082,2.27,.205,.025,.018,.018,mat(0x17121c));
+  sphere(g,0,2.17,.218,.035,.025,.025,mat(0x6c3e3b));
+  const belt=new T.Mesh(new T.TorusGeometry(.25,.018,6,32),mat(0xc6a36a,.7,.25));belt.position.set(0,1.13,0);belt.rotation.x=Math.PI/2;g.add(belt);
   return g;
  }
- const pair=new T.Group();scene.add(pair);let woman=makeWoman(0),man=makeMan();woman.position.x=-1.05;woman.scale.setScalar(.94);man.position.x=1.05;man.scale.setScalar(.94);pair.add(woman,man);
+ const pair=new T.Group();scene.add(pair);
+ let woman=makeWoman(0),man=makeMan();
+ woman.position.set(-1.35,1.82,0);woman.scale.setScalar(1.05);
+ man.position.set(1.3,0,0);man.scale.setScalar(1.12);
+ pair.add(woman,man);
  const stars=new T.Group();for(let i=0;i<80;i++){let p=new T.Mesh(new T.SphereGeometry(.012,6,6),new T.MeshBasicMaterial({color:i%2?0xff8fbe:0xb8a2ff,transparent:true,opacity:.65}));p.position.set((Math.random()-.5)*9,Math.random()*4.5+.3,(Math.random()-.5)*3-1);stars.add(p)}scene.add(stars);
- let dragging=false,lastX=0,auto=true,zoom=9.4;
+ let dragging=false,lastX=0,auto=true,zoom=8.2;
  function resize(){let w=host.clientWidth,h=host.clientHeight;renderer.setSize(w,h,false);camera.aspect=w/h;camera.updateProjectionMatrix()}new ResizeObserver(resize).observe(host);resize();
  host.addEventListener('pointerdown',e=>{dragging=true;lastX=e.clientX;host.setPointerCapture(e.pointerId)});
  host.addEventListener('pointermove',e=>{if(!dragging)return;pair.rotation.y+=(e.clientX-lastX)*.009;lastX=e.clientX;});
  host.addEventListener('pointerup',()=>dragging=false);host.addEventListener('pointercancel',()=>dragging=false);
- host.addEventListener('wheel',e=>{zoom=Math.max(6.5,Math.min(12,zoom+e.deltaY*.008));camera.position.z=zoom},{passive:true});
+ host.addEventListener('wheel',e=>{zoom=Math.max(6.2,Math.min(11,zoom+e.deltaY*.008));camera.position.z=zoom},{passive:true});
  $('rotateBtn').onclick=()=>{auto=!auto;$('rotateBtn').textContent='⟳ AUTO ROTATE: '+(auto?'ON':'OFF')};
  let chosen=0;
- function selectCharacter(i){chosen=i;let c=cast[i];$('girlLabel').textContent=c.name.toUpperCase();$('meetBtn').textContent='♡ TALK TO '+c.name.toUpperCase();let old=pair.getObjectByName('selectedWoman');if(old)pair.remove(old);let nw=makeWoman(i);nw.name='selectedWoman';nw.position.x=-1.05;nw.scale.setScalar(.94);pair.add(nw);woman=nw;document.querySelectorAll('.cast-chip').forEach((b,j)=>b.classList.toggle('active',j===i));}
+ function selectCharacter(i){chosen=i;let c=cast[i];$('girlLabel').textContent=c.name.toUpperCase();$('meetBtn').textContent='♡ TALK TO '+c.name.toUpperCase();if(woman)pair.remove(woman);let nw=makeWoman(i);nw.name='selectedWoman';nw.position.set(-1.35,1.82,0);nw.scale.setScalar(1.05);pair.add(nw);woman=nw;document.querySelectorAll('.cast-chip').forEach((b,j)=>b.classList.toggle('active',j===i));}
  $('meetBtn').onclick=()=>openStory(cast[chosen].id);
  $('swapBtn').onclick=()=>selectCharacter((chosen+1)%cast.length);
  $('castStrip').innerHTML=cast.map((c,i)=>'<button class="cast-chip '+(i===0?'active':'')+'" data-cast="'+i+'"><img src="'+c.image+'" alt=""><span><strong>'+c.name+'</strong><small>'+c.role+'</small></span></button>').join('');
