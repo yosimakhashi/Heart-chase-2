@@ -41,6 +41,8 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
 .reina-pose{flex:0 0 58px;width:58px;height:76px;padding:3px;border:1px solid #ffffff28;border-radius:10px;background:#21172c;overflow:hidden;opacity:.72}
 .reina-pose img{width:100%;height:100%;object-fit:cover;object-position:center 25%;border-radius:7px;display:block}
 .reina-pose.active{border:2px solid var(--pink);opacity:1;box-shadow:0 0 16px #ff5c9a55}
+.reina-pose.locked{filter:grayscale(1);opacity:.38;position:relative}
+.reina-pose.locked:after{content:'🔒';position:absolute;inset:0;display:grid;place-items:center;background:#100b19a8;font-size:17px}
 .reina-poses[hidden]{display:none}
 
 /* Single-character portrait and sequential unlock gallery */
@@ -192,6 +194,7 @@ points=scoreState.total;
 
 const REINA_POSES=Array.from({length:10},(_,i)=>({n:i+1,src:'assets/Reina_Pose_'+String(i+1).padStart(2,'0')+'.jpg'}));
 let reinaPose=Math.max(1,Math.min(10,Number(localStorage.getItem('hc2_reina_pose')||1)||1));
+let reinaPoseUnlocked=Math.max(1,Math.min(10,Number(localStorage.getItem('hc2_reina_pose_unlocked')||0)||1));
 const $=id=>document.getElementById(id);
 function persist(){scoreState.total=points;localStorage.setItem('hc2_saved',JSON.stringify(saved));localStorage.setItem('hc2_played',JSON.stringify(played));localStorage.setItem('hc2_points',String(points));localStorage.setItem(SCORE_KEY,JSON.stringify(scoreState));}
 function stats(){$('connections').innerHTML=String(played.length).padStart(2,'0')+' <span>made</span>';$('favourites').innerHTML=String(saved.length).padStart(2,'0')+' <span>saved</span>';$('points').innerHTML=Number(points).toLocaleString('en-IN')+' <span>✦</span>';if($('unlockGallery'))renderGameSystems();}
@@ -234,7 +237,9 @@ function renderReinaPoses(){
  const wrap=$('reinaPoses');if(!wrap)return;
  const isReina=(scoreState.selected||'reina')==='reina';wrap.hidden=!isReina;
  if(!isReina)return;
- wrap.innerHTML=REINA_POSES.map(p=>'<button type="button" class="reina-pose '+(p.n===reinaPose?'active':'')+'" data-reina-pose="'+p.n+'" aria-label="Reina pose '+p.n+'" aria-pressed="'+(p.n===reinaPose)+'"><img src="'+p.src+'" alt=""></button>').join('');
+ const unlocked=Math.max(reinaPoseUnlocked,Math.min(10,Math.floor(Math.max(0,points)/1000)+1));if(unlocked>reinaPoseUnlocked){reinaPoseUnlocked=unlocked;localStorage.setItem('hc2_reina_pose_unlocked',String(unlocked));}
+ if(reinaPose>reinaPoseUnlocked)reinaPose=1;
+ wrap.innerHTML=REINA_POSES.map(p=>{const open=p.n<=reinaPoseUnlocked;return '<button type="button" class="reina-pose '+(p.n===reinaPose?'active':'')+' '+(open?'':'locked')+'" '+(open?'data-reina-pose="'+p.n+'"':'disabled')+' aria-label="'+(open?'Reina pose '+p.n:'Locked until '+((p.n-1)*1000)+' points')+'" aria-pressed="'+(p.n===reinaPose)+'"><img src="'+(open?p.src:'assets/01_Reina_Elite_Mentor.jpg')+'" alt="">'+(!open?'<span class="pose-lock">🔒</span>':'')+'</button>'}).join('');
 }
 function renderGameSystems(){
  if(!$('dailyQuests'))return;
@@ -256,7 +261,7 @@ function renderGameSystems(){
  $('logTotal').textContent=points.toLocaleString('en-IN')+' TOTAL';
  $('scoreLog').innerHTML=(scoreState.log||[]).slice(0,8).map(x=>'<div class="log-entry"><span>'+x.reason+'</span><b class="'+(x.delta<0?'negative':'')+'">'+(x.delta>0?'+':'')+x.delta+'</b></div>').join('')||'<div class="log-entry"><span>No points earned yet. Complete a mission to begin.</span><b>0</b></div>';
 }
-$('reinaPoses').addEventListener('click',e=>{const b=e.target.closest('[data-reina-pose]');if(!b)return;reinaPose=Number(b.dataset.reinaPose);localStorage.setItem('hc2_reina_pose',String(reinaPose));renderGameSystems();});
+$('reinaPoses').addEventListener('click',e=>{const b=e.target.closest('[data-reina-pose]');if(!b)return;const n=Number(b.dataset.reinaPose);if(n>reinaPoseUnlocked)return;reinaPose=n;localStorage.setItem('hc2_reina_pose',String(reinaPose));renderGameSystems();});
 $('dailyQuests').addEventListener('click',e=>{const b=e.target.closest('[data-quest]');if(!b)return;const id=b.dataset.quest;if(scoreState.done[id]!=null)undoQuest(id);else claimQuest(id)});
 $('redFlags').addEventListener('click',e=>{const b=e.target.closest('[data-flag]');if(!b)return;const f=FLAGS[Number(b.dataset.flag)];if(confirm('Deduct '+Math.abs(f.pts)+' points for: '+f.name+'?'))addScore(f.pts,'Red flag: '+f.name);renderGameSystems()});
 $('unlockGallery').addEventListener('click',e=>{const u=e.target.closest('[data-unlock]');if(u){const i=Number(u.dataset.unlock),next=UNLOCKS[scoreState.unlockedCount];if(i!==scoreState.unlockedCount||!next||points<next.at)return;scoreState.unlockedCount++;scoreState.selected=next.id;persist();renderGameSystems();toast(next.name+' portrait unlocked!');return}const b=e.target.closest('[data-select]');if(b){scoreState.selected=b.dataset.select;persist();renderGameSystems()}});
