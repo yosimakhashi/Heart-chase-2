@@ -181,7 +181,7 @@ scoreState.log=Array.isArray(scoreState.log)?scoreState.log:[];
 scoreState.streak=Number(scoreState.streak)||0;
 scoreState.lastStreak=scoreState.lastStreak||'';
 scoreState.unlockedCount=Math.max(0,Math.min(5,Number(scoreState.unlockedCount)||0));
-if(scoreState.date!==dateKey()){scoreState.date=dateKey();scoreState.done={};}
+if(scoreState.date!==dateKey()){scoreState.date=dateKey();scoreState.done={};scoreState.charmRuns=0;}
 points=scoreState.total;
 
 const $=id=>document.getElementById(id);
@@ -224,7 +224,6 @@ function undoQuest(id){
 }
 function renderGameSystems(){
  if(!$('dailyQuests'))return;
- if($('charmRuns'))updateCharmRuns();
  const done=Object.keys(scoreState.done||{}).length;
  const earned=Object.values(scoreState.done||{}).reduce((a,b)=>a+Number(b||0),0);
  $('dailySummary').textContent=done+'/'+QUESTS.length+' completed today · +'+earned+' mission points';
@@ -267,6 +266,7 @@ function finishCharm(){
 }
 
 renderGameSystems();
+updateCharmRuns();
 
 </script>
 </body></html>
