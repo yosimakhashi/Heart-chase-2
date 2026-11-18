@@ -145,7 +145,7 @@ footer{border-top:1px solid var(--line);margin-top:45px;padding-top:20px;display
  <div class="mission-grid" id="dailyQuests"></div>
  <div class="section-head penalty-head"><div><h2>Red flags</h2><p>Honest accountability. These actions deduct points.</p></div></div>
  <div class="penalty-grid" id="redFlags"></div>
- <form id="bonusForm" class="bonus-form"><div><strong>Extra points</strong><small>Reward a meaningful action not listed above.</small></div><input id="bonusReason" type="text" maxlength="80" placeholder="What did you accomplish?" required><div class="bonus-row"><input id="bonusPoints" type="number" min="1" max="5000" step="1" placeholder="Points" required><button class="primary" type="submit">ADD POINTS</button></div></form>
+ <form id="bonusForm" class="bonus-form"><div><strong>Extra points</strong><small>Reward a meaningful action not listed above.</small></div><input id="bonusReason" type="text" maxlength="80" placeholder="What did you accomplish?" required><div class="bonus-row"><input id="bonusPoints" type="number" min="1" max="10000" step="1" placeholder="Points" required><button class="primary" type="submit">ADD POINTS</button></div></form>
  <div class="charm-game"><div><strong>Charm challenge</strong><small>30 seconds · red hearts +5 · gold hearts +25 · broken hearts −15 · three runs daily</small></div><div class="charm-playfield" id="charmPlayfield"><span id="charmTimer">30</span><button type="button" id="charmStart">START CHALLENGE</button><strong id="charmRunScore">+0</strong></div><div class="charm-runs" id="charmRuns">3 runs remaining today</div></div>
  <div class="score-log"><div class="log-head"><strong>Score history</strong><span id="logTotal">0 TOTAL</span></div><div id="scoreLog"></div></div>
 </section>
@@ -248,11 +248,11 @@ function renderGameSystems(){
  $('dailySummary').textContent=done+'/'+QUESTS.length+' completed today · +'+earned+' mission points';
  $('dailyQuests').innerHTML=QUESTS.map(q=>{const yes=scoreState.done[q.id]!=null;return '<button class="mission-btn '+(yes?'done':'')+'" data-quest="'+q.id+'"><span class="mission-ic">'+q.ic+'</span><span class="mission-copy"><strong>'+q.name+'</strong><small>+'+q.pts+' POINTS</small></span><span class="mission-check">'+(yes?'✓':'＋')+'</span></button>'}).join('');
  $('redFlags').innerHTML=FLAGS.map((f,i)=>'<button class="penalty-btn" data-flag="'+i+'"><span>'+f.name+'</span><b>'+f.pts+'</b></button>').join('');
- const count=scoreState.unlockedCount||0,next=UNLOCKS[count],target=5000;
+ const count=scoreState.unlockedCount||0,next=UNLOCKS[count],target=10000;
  $('unlockCount').textContent=count+' / 5 UNLOCKED';
  $('unlockScore').textContent=points.toLocaleString('en-IN')+' / '+target.toLocaleString('en-IN')+' POINTS';
  $('unlockFill').style.width=Math.min(100,points/target*100)+'%';
- $('unlockHint').textContent=count>=5?'All five bonus portraits unlocked. Every milestone cleared.':points>=next.at?'Milestone reached. Unlock '+next.name+' now, then the next portrait will wait for its own milestone.':'Next portrait: '+next.name+' at '+next.at.toLocaleString('en-IN')+' points · '+Math.max(0,next.at-points).toLocaleString('en-IN')+' to go.';
+ $('unlockHint').textContent=points>=10000?'10,000-point goal complete! All five bonus portraits are yours.':count>=5?'All five bonus portraits unlocked. Keep going to the 10,000-point goal.':points>=next.at?'Milestone reached. Unlock '+next.name+' now, then the next portrait will wait for its own milestone.':'Next portrait: '+next.name+' at '+next.at.toLocaleString('en-IN')+' points · '+Math.max(0,next.at-points).toLocaleString('en-IN')+' to go.';
  $('unlockGallery').innerHTML=UNLOCKS.map((u,i)=>{const open=i<count,ready=i===count&&points>=u.at;return '<article class="unlock-card"><div class="unlock-art '+(open?'':'locked')+'">'+(open?'<img src="'+u.image+'" alt="'+u.name+' portrait">':'')+'</div><strong>'+(open?u.name:'Portrait '+(i+1))+'</strong><small>'+(open?'UNLOCKED':u.at.toLocaleString('en-IN')+' POINTS')+'</small>'+(open?'<button data-select="'+u.id+'">VIEW PORTRAIT</button>':i===count?'<button data-unlock="'+i+'" '+(!ready?'disabled':'')+'>'+(ready?'UNLOCK NEXT':'LOCKED')+'</button>':'<button disabled>LOCKED</button>')+'</article>'}).join('');
  const selected=cast.find(c=>c.id===scoreState.selected)||cast[0];
  renderReinaPoses();
@@ -265,7 +265,7 @@ $('reinaPoses').addEventListener('click',e=>{const b=e.target.closest('[data-rei
 $('dailyQuests').addEventListener('click',e=>{const b=e.target.closest('[data-quest]');if(!b)return;const id=b.dataset.quest;if(scoreState.done[id]!=null)undoQuest(id);else claimQuest(id)});
 $('redFlags').addEventListener('click',e=>{const b=e.target.closest('[data-flag]');if(!b)return;const f=FLAGS[Number(b.dataset.flag)];if(confirm('Deduct '+Math.abs(f.pts)+' points for: '+f.name+'?'))addScore(f.pts,'Red flag: '+f.name);renderGameSystems()});
 $('unlockGallery').addEventListener('click',e=>{const u=e.target.closest('[data-unlock]');if(u){const i=Number(u.dataset.unlock),next=UNLOCKS[scoreState.unlockedCount];if(i!==scoreState.unlockedCount||!next||points<next.at)return;scoreState.unlockedCount++;scoreState.selected=next.id;persist();renderGameSystems();toast(next.name+' portrait unlocked!');return}const b=e.target.closest('[data-select]');if(b){scoreState.selected=b.dataset.select;persist();renderGameSystems()}});
-$('bonusForm').addEventListener('submit',e=>{e.preventDefault();const reason=$('bonusReason').value.trim(),amount=Math.round(Number($('bonusPoints').value));if(!reason||!Number.isFinite(amount)||amount<1||amount>5000)return toast('Enter a reason and 1 to 5,000 points.');$('bonusReason').value='';$('bonusPoints').value='';addScore(amount,reason);renderGameSystems()});
+$('bonusForm').addEventListener('submit',e=>{e.preventDefault();const reason=$('bonusReason').value.trim(),amount=Math.round(Number($('bonusPoints').value));if(!reason||!Number.isFinite(amount)||amount<1||amount>10000)return toast('Enter a reason and 1 to 10,000 points.');$('bonusReason').value='';$('bonusPoints').value='';addScore(amount,reason);renderGameSystems()});
 $('meetBtn').onclick=()=>openStory(scoreState.selected||'reina');
 
 let charmRun=null,earnedCache=0;
